@@ -1,40 +1,54 @@
-import { clsx, type ClassValue } from "clsx";
-import { twMerge } from "tailwind-merge";
-
-export function cn(...inputs: ClassValue[]) {
-  return twMerge(clsx(inputs));
-}
-
-export function formatDate(date: Date) {
-  return Intl.DateTimeFormat("en-US", {
-    month: "short",
-    day: "2-digit",
-    year: "numeric"
+export function formatDate(date: Date, locale: string) {
+  return new Intl.DateTimeFormat(locale, {
+    year: "numeric",
+    month: "long",
+    day: "numeric",
   }).format(date);
 }
 
-export function readingTime(html: string) {
-  const textOnly = html.replace(/<[^>]+>/g, "");
-  const wordCount = textOnly.split(/\s+/).length;
-  const readingTimeMinutes = ((wordCount / 200) + 1).toFixed();
-  return `${readingTimeMinutes} min read`;
+export function formatDateShort(date: Date, locale: string) {
+  return new Intl.DateTimeFormat(locale, {
+    year: "numeric",
+    month: "short",
+    day: "2-digit",
+  }).format(date);
 }
 
-export function dateRange(startDate: Date, endDate?: Date | string): string {
-  const startMonth = startDate.toLocaleString("default", { month: "short" });
-  const startYear = startDate.getFullYear().toString();
-  let endMonth;
-  let endYear;
+export function slugify(str: string) {
+  return str
+    .normalize("NFKD")
+    .replace(/[\u0300-\u036f]/g, "")
+    .toLowerCase()
+    .trim()
+    .replace(/['"]/g, "")
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/^-+|-+$/g, "");
+}
 
-  if (endDate) {
-    if (typeof endDate === "string") {
-      endMonth = "";
-      endYear = endDate;
-    } else {
-      endMonth = endDate.toLocaleString("default", { month: "short" });
-      endYear = endDate.getFullYear().toString();
-    }
-  }
+export function truncate(str: string, n: number, ellipsis = "…") {
+  if (str.length <= n) return str;
+  const cut = str.slice(0, n).trimEnd();
+  const lastSpace = cut.lastIndexOf(" ");
+  return `${(lastSpace > Math.max(0, n - 20) ? cut.slice(0, lastSpace) : cut).trimEnd()}${ellipsis}`;
+}
 
-  return `${startMonth}${startYear} - ${endMonth}${endYear}`;
+export function capitalize(str: string) {
+  if (!str) return str;
+  return str.charAt(0).toUpperCase() + str.slice(1);
+}
+
+export function groupBy<T>(arr: T[], key: keyof T) {
+  return arr.reduce<Record<string, T[]>>((acc, item) => {
+    const groupKey = String(item[key]);
+    (acc[groupKey] ||= []).push(item);
+    return acc;
+  }, {});
+}
+
+export function calcReadingTime(content: string) {
+  const words = content.trim().split(/\s+/).filter(Boolean).length;
+  return {
+    minutes: Math.max(1, Math.ceil(words / 200)),
+    words,
+  };
 }

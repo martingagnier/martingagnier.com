@@ -1,30 +1,33 @@
 import rss from "@astrojs/rss";
-import { getCollection } from "astro:content";
-import { HOME } from "@consts";
+import { getCollection, type CollectionEntry } from "astro:content";
+import { siteConfig } from "../config/site.config";
 
-type Context = {
-  site: string
-}
-
-export async function GET(context: Context) {
-  const blog = (await getCollection("blog"))
-  .filter(post => !post.data.draft);
-
-  const projects = (await getCollection("projects"))
-    .filter(project => !project.data.draft);
-
-  const items = [...blog, ...projects]
-    .sort((a, b) => new Date(b.data.date).valueOf() - new Date(a.data.date).valueOf());
+export async function GET() {
+  const posts: CollectionEntry<"blog">[] = await getCollection("blog");
+  const publishedPosts = posts
+    .filter(
+      (post: CollectionEntry<"blog">) =>
+        post.data.locale === siteConfig.i18n.defaultLocale && !post.data.draft,
+    )
+    .sort(
+      (a: CollectionEntry<"blog">, b: CollectionEntry<"blog">) =>
+        new Date(b.data.publishDate).getTime() -
+        new Date(a.data.publishDate).getTime(),
+    );
 
   return rss({
-    title: HOME.TITLE,
-    description: HOME.DESCRIPTION,
-    site: context.site,
-    items: items.map((item) => ({
-      title: item.data.title,
-      description: item.data.description,
-      pubDate: item.data.date,
-      link: `/${item.collection}/${item.slug}/`,
+    title: siteConfig.name,
+    description: siteConfig.description,
+    site: siteConfig.url,
+    items: publishedPosts.map((post: CollectionEntry<"blog">) => ({
+      title: post.data.title,
+      description: post.data.description,
+      link: `/blog/${post.id}`,
+      pubDate: post.data.publishDate,
+      categories: post.data.tags ?? [],
+      author: post.data.author,
+      customData: post.data.featured ? "<featured>true</featured>" : "",
     })),
+    customData: `<language>${siteConfig.i18n.defaultLocale}</language>`,
   });
 }
