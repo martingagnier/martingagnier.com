@@ -7,6 +7,7 @@ import tailwindcss from '@tailwindcss/vite';
 
 export default defineConfig({
   site: 'https://martingagnier.com',
+  trailingSlash: 'never',
   integrations: [
     mdx(),
     react(),
