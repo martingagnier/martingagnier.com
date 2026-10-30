@@ -9,9 +9,6 @@ import {
 import { siteConfig } from "../../config/site.config";
 import JsonLd from "./JsonLd.astro";
 
-// IMPORT DU CSS GLOBAL (C'est ce qui manque pour charger le style sur mobile !)
-import "../../styles/global.css";
-
 export interface SEOArticle {
   publishedTime?: string;
   modifiedTime?: string;
@@ -58,10 +55,6 @@ const schema =
   jsonLd ?? jsonLdWebSite({ title: fullTitle, description, locale, path });
 const schemas = Array.isArray(schema) ? schema : [schema];
 ---
-
-<!-- Balises système et Viewport indispensables pour le mobile -->
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
 <title>{fullTitle}</title>
 <meta name="description" content={description} />
