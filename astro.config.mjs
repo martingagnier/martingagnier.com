@@ -8,6 +8,9 @@ import tailwindcss from '@tailwindcss/vite';
 export default defineConfig({
   site: 'https://martingagnier.com',
   trailingSlash: 'always',
+  build: {
+    format: 'directory',
+  },
   integrations: [
     mdx(),
     react(),
