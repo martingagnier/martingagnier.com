@@ -9,7 +9,7 @@ export default defineConfig({
   site: 'https://martingagnier.com',
   trailingSlash: 'always',
   build: {
-    format: 'directory',
+    assets: 'assets', // Renomme /_astro/ en /assets/ pour éviter les règles cachées de Cloudflare
   },
   integrations: [
     mdx(),
