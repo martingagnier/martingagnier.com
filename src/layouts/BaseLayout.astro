@@ -56,9 +56,17 @@ function defaultOgImage(routePath: string) {
   <head>
     <!-- Masque le site des moteurs de recherche -->
     <meta name="robots" content="noindex, nofollow" />
-  
+
+    <!-- Installation de GTM -->
+    <script async src="https://www.googletagmanager.com/gtm.js?id=GTM-TLFCJ9K"></script>
+    <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+    </script>
+
     <!-- Tes autres balises meta, styles, etc. -->
-    
+
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
